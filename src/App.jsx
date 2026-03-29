@@ -56,8 +56,8 @@ const Button = ({ children, className = "", variant = "default", disabled, ...pr
   };
   return <button style={variant === "default" ? { backgroundColor: BRAND.yellow } : undefined} className={`inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium tracking-[-0.01em] transition-all duration-200 backdrop-blur ${variants[variant] || variants.default} ${disabled ? "opacity-40" : ""} ${className}`} disabled={disabled} {...props}>{children}</button>;
 };
-const Input = ({ className = "", ...props }) => <input className={`h-12 w-full rounded-2xl border border-white/80 bg-white/80 px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-sky-200 focus:ring-4 focus:ring-sky-100 ${className}`} {...props} />;
-const Textarea = ({ className = "", ...props }) => <textarea className={`w-full rounded-2xl border border-white/80 bg-white/80 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-sky-200 focus:ring-4 focus:ring-sky-100 ${className}`} {...props} />;
+const Input = ({ className = "", ...props }) => <input className={`h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm text-slate-900 shadow-[0_8px_20px_-14px_rgba(15,23,42,0.18)] outline-none transition placeholder:text-slate-400 focus:border-slate-900 focus:ring-4 focus:ring-slate-200/70 ${className}`} {...props} />;
+const Textarea = ({ className = "", ...props }) => <textarea className={`w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 shadow-[0_8px_20px_-14px_rgba(15,23,42,0.18)] outline-none transition placeholder:text-slate-400 focus:border-slate-900 focus:ring-4 focus:ring-slate-200/70 ${className}`} {...props} />;
 const Label = ({ children, className = "" }) => <label className={`text-sm font-medium text-slate-700 ${className}`}>{children}</label>;
 const Progress = ({ value }) => <div className="h-2 w-full overflow-hidden rounded-full bg-white/70"><div className="h-2 rounded-full bg-gradient-to-r from-sky-400 via-sky-500 to-indigo-500 transition-all duration-300" style={{ width: `${value}%` }} /></div>;
 const Badge = ({ children }) => <span className="inline-flex items-center rounded-full border border-slate-200/80 bg-white/80 px-2.5 py-1 text-xs font-medium text-slate-700 backdrop-blur">{children}</span>;
@@ -87,7 +87,7 @@ const steps = [
 const initialData = {
   id: null, status: "draft", createdAt: null, updatedAt: null, attachments: [], activity: [],
   customer: { companyName: "", companyAddress: "", contactName: "", contactEmail: "", contactPhone: "", budget: "" },
-  event: { title: "", type: "Corporate event", date: "", startTime: "", endTime: "", setupTime: "", teardownTime: "", guests: "", mood: "", notes: "" },
+  event: { title: "", type: "Corporate event", date: "", startTime: "", endTime: "", setupDate: "", setupTime: "", teardownTime: "", guests: "", mood: "", notes: "" },
   location: { venueName: "", address: "", capacity: "", size: "", restrictions: { nebel: false, konfetti: false, offeneFlamme: false, rigging: false }, extraRules: "" },
   services: {},
   general: { customerDislikes: "", blockedVendors: "", specialNotes: "" },
@@ -146,7 +146,7 @@ function TopStat({ label, value, meta }) {
     </div>
   );
 }
-function FormField({ label, children, hint = "" }) { return <div className="space-y-2.5"><Label>{label}</Label>{hint ? <p className="text-xs leading-5 text-slate-400">{hint}</p> : null}{children}</div>; }
+function FormField({ label, children, hint = "" }) { return <div className="space-y-2.5 rounded-[24px] border border-slate-200/80 bg-slate-50/70 p-4 md:p-5"><Label>{label}</Label>{hint ? <p className="text-xs leading-5 text-slate-400">{hint}</p> : null}{children}</div>; }
 function SummaryCard({ title, rows }) { return <Card className="h-full border-slate-200/80"><CardHeader className="border-b border-slate-100"><CardTitle className="text-lg">{title}</CardTitle></CardHeader><CardContent className="space-y-3 text-sm text-slate-600">{rows.map(([k, v]) => <div key={k} className="flex items-start justify-between gap-4"><span className="text-slate-400">{k}</span><span className="text-right font-medium text-slate-900">{v || "—"}</span></div>)}</CardContent></Card>; }
 function LemonLogo({ compact = false, className = "" }) {
   return (
@@ -608,10 +608,11 @@ export default function EventBriefingProductionAppV2() {
             <CardContent className="grid gap-5 md:grid-cols-2">
               <div className="md:col-span-2"><FormField label="Event name *"><Input value={data.event.title} onChange={(e) => setField("event", "title", e.target.value)} /></FormField></div>
               <div className="md:col-span-2"><FormField label="Event type"><OptionChips options={eventTypes} value={data.event.type} onChange={(value) => setField("event", "type", value)} /></FormField></div>
-              <FormField label="Date *"><Input type="date" value={data.event.date} onChange={(e) => setField("event", "date", e.target.value)} /></FormField>
+              <FormField label="Event date *"><Input type="date" value={data.event.date} onChange={(e) => setField("event", "date", e.target.value)} /></FormField>
               <FormField label="Guest count *"><Input type="number" min="0" value={data.event.guests} onChange={(e) => setField("event", "guests", e.target.value)} /></FormField>
               <FormField label="Start time"><Input type="time" value={data.event.startTime} onChange={(e) => setField("event", "startTime", e.target.value)} /></FormField>
               <FormField label="End time"><Input type="time" value={data.event.endTime} onChange={(e) => setField("event", "endTime", e.target.value)} /></FormField>
+              <FormField label="Setup date"><Input type="date" value={data.event.setupDate || ""} onChange={(e) => setField("event", "setupDate", e.target.value)} /></FormField>
               <FormField label="Setup time"><Input type="time" value={data.event.setupTime} onChange={(e) => setField("event", "setupTime", e.target.value)} /></FormField>
               <FormField label="Teardown time"><Input type="time" value={data.event.teardownTime} onChange={(e) => setField("event", "teardownTime", e.target.value)} /></FormField>
               <div className="md:col-span-2"><FormField label="Desired mood"><OptionChips options={moods} value={data.event.mood} onChange={(value) => setField("event", "mood", value)} /></FormField></div>
